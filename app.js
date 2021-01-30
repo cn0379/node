@@ -15,9 +15,11 @@
 
 const http = require('http')
 const cheerio = require('cheerio')
+const download = require('download')
+
 let HOST = 'http://web.itheima.com/'
 
-let req = http.request( HOST + 'teacher.html', res => {
+let req = http.request(HOST + 'teacher.html', res => {
   let chunks = []
 
   res.on('data', chunk => {
@@ -30,8 +32,11 @@ let req = http.request( HOST + 'teacher.html', res => {
     // $('.tea_main .tea_box4 .main_pic > img').each( (idx , item) => {
     //   console.log(HOST + $(item).attr('src'));
     // } )
-    let imgs = Array.prototype.map.call($('.tea_main .tea_box4 .main_pic > img'),item => HOST + $(item).attr('src'))
-    console.log(imgs);
+    let imgs = Array.prototype.map.call($('.tea_main .tea_box4 .main_pic > img'), item => HOST + encodeURI($(item).attr('src')))
+    // console.log(imgs);
+    Promise.all(imgs.map(x => download(x, 'dist'))).then(() => {
+      console.log('success');
+    })
   })
 })
 
